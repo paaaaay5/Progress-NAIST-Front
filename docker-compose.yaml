@@ -1,0 +1,16 @@
+version: "2"
+services:
+  app:
+    container_name: react_app
+    privileged: true
+    restart: always
+    stdin_open: true
+    tty: true
+    command: /bin/sh
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app/src:/usr/src/app
