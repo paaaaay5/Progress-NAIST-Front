@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-arocup-dev-145917-authRole",
+      "UnauthRoleArn": "arn:aws:iam::774848854882:role/amplify-arocup-dev-145917-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::774848854882:role/amplify-arocup-dev-145917-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-arocup-dev-145917-deployment",
+      "UnauthRoleName": "amplify-arocup-dev-145917-unauthRole",
+      "StackName": "amplify-arocup-dev-145917",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:774848854882:stack/amplify-arocup-dev-145917/332c51a0-bcad-11ed-bf4a-0a1a788f2507",
+      "AmplifyAppId": "d24quhvgxi96vw"
+    },
+    "categories": {
+      "auth": {
+        "arocupc6cd8ab0": {}
+      }
+    }
+  }
+}
