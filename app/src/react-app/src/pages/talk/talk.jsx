@@ -17,7 +17,7 @@ const TALK = (props) => {
   const [result,setResult] = useState('失敗')
 
   async function sendPrompt(prompt = []) {
-    let API_KEY = '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'
+    let API_KEY = ''
     // promptがない場合
     if (!prompt) return
 
