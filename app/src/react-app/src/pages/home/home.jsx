@@ -15,9 +15,9 @@ const HOME = () => {
         <h2>ようこそ{user.username}さん</h2>
         <Button onClick={() => navigate('/torophy')}>実績</Button>
         <div>
-            <Button onClick={() => navigate('/talk')}>イージー</Button>
-            <Button onClick={() => navigate('/talk')}>ノーマル</Button>
-            <Button onClick={() => navigate('/talk')}>ハード</Button>
+            <Button onClick={() => navigate('/talk',{level:0})}>イージー</Button>
+            <Button onClick={() => navigate('/talk',{level:1})}>ノーマル</Button>
+            <Button onClick={() => navigate('/talk',{level:2})}>ハード</Button>
         </div>
         <Button onClick={signOut}>サインアウト</Button>
     </>
