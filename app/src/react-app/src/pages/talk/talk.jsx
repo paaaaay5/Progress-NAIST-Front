@@ -17,7 +17,7 @@ const TALK = (props) => {
   const [result,setResult] = useState('失敗')
 
   async function sendPrompt(prompt = []) {
-    let API_KEY = ''
+    let API_KEY = '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'
     // promptがない場合
     if (!prompt) return
 
@@ -64,7 +64,7 @@ const TALK = (props) => {
         <p>テーマ : {themes[0]}</p>
         <p>ターン {cnt}/5</p>
       </div>
-      <div className="chat-body-left" style={'width=30%'}>
+      <div className="chat-body-left">
         <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img>
       </div>
       <div className='chat-body-right'>
