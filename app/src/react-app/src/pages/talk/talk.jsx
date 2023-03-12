@@ -8,7 +8,6 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import Grid  from "@mui/material/Grid";
 
 const TALK = (props) => {
 
@@ -25,7 +24,7 @@ const TALK = (props) => {
   const [result,setResult] = useState('失敗')
 
   async function sendPrompt(prompt = []) {
-    let API_KEY = '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'
+    let API_KEY = process.env.REACT_APP_API_KEY;
     // promptがない場合
     if (!prompt) return
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -80,7 +79,7 @@ const TALK = (props) => {
       </div>
       <Stack direction="row" spacing={2}>
         <div className="chat-body-left" style={{height:'80%',}}>
-          <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img>
+          {/* <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img> */}
         </div>
         <div className='chat-body-right' style={{width:'100%'}}>
           <Box
