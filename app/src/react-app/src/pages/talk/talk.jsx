@@ -1,15 +1,23 @@
-import {Button} from '@aws-amplify/ui-react'
+import Button from '@mui/material/Button';
 import { React, useState, useRef } from 'react'
 import SPEACH from './speach_rec';
+import SendIcon from '@mui/icons-material/Send';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
+import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
+import Grid  from "@mui/material/Grid";
 
 const TALK = (props) => {
 
   const inputEL = useRef(null);
   const themes = ['ハッカソン'];
 
-  const chatSystem = ["あなたは生意気な小学生です。一人称はぼくを使用してください。今からあなたは討論を行います。テーマはハッカソンです。あなたは相手の言うことに対して肯定的であってください。"
-                      ,"あなたは生意気な小学生です。一人称はぼくを使用してください。今からあなたは討論を行います。テーマはハッカソンです。あなたは相手の言うことに対して否定的であってください。"]
-  const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[0]}]);
+  const chatSystem = ["今からあなたは説得されます。あなたは相手の言うことに対して肯定的であってください。"
+                      ,"今からあなたは説得されます。あなたは相手の言うことに対して否定的であってください。"]
+  const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[1]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
   let [cnt,setCnt] = useState(1);
@@ -17,10 +25,9 @@ const TALK = (props) => {
   const [result,setResult] = useState('失敗')
 
   async function sendPrompt(prompt = []) {
-    let API_KEY = ''
+    let API_KEY = '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'
     // promptがない場合
     if (!prompt) return
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -38,48 +45,112 @@ const TALK = (props) => {
         //"stop": [" Human:", " AI:"] // 途中で生成を停止する単語
       }),
     })
+
     const data = await response.json()
-    //console.log(data)
+    console.log(data)
     setRes(data.choices[0].message.content)
-    setCnt(++cnt)
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
             {"role" : "assistant", "content": data.choices[0].message.content}])
-
+  };
+  
+  const send = () => {
+    setText(inputEL.current.value);
+    sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
+    setCnt(++cnt);
     if (cnt === 5){
       setFlag(true);
       //成功失敗判定を組み込む
       setResult('成功')
     }
   };
-  
-  const send = () => {
-    setText(inputEL.current.value)
-    sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}])
-  };
+
+  const initState = () => {
+    setCnt(0);
+    setChat([{"role": "system","content": chatSystem[1]}]);
+    setText('');
+    setRes('');
+    setFlag(!flag);
+}
 
   return (
     <>      
-      <h1>TALK</h1>
       <div className="chat-head">
-        <p>テーマ : {themes[0]}</p>
-        <p>ターン {cnt}/5</p>
+        <h1>テーマ : {themes[0]}</h1>
+        <h2>ターン {cnt}/5</h2>
       </div>
-      <div className="chat-body-left">
-        <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img>
-      </div>
-      <div className='chat-body-right'>
-        <div className="chat-log">
-          <p>自分 : {text} </p>
-          <p>返信 : {res} </p>
+      <Stack direction="row" spacing={2}>
+        <div className="chat-body-left" style={{height:'80%',}}>
+          <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img>
         </div>
-        <div className="chat-send">
-          <input ref= { inputEL } type="text" />
-          <Button onClick={ send }>送信</Button>
-          <SPEACH/>
+        <div className='chat-body-right' style={{width:'100%'}}>
+          <Box
+            sx={{
+              bgcolor:'#b0c4de',
+              boxShadow: 1,
+              borderRadius: 2,
+              p: 2,
+              minWidth: 300,
+              height: '90%',
+              width:'80%',
+            }}
+          >
+            <div className="chat-log">
+              <Box
+                component="p"
+                  sx={{
+                    bgcolor:'#90ee90',
+                    boxShadow: 1,
+                    borderRadius: 2,
+                    p: 2,
+                    width: 'fit-content',
+                    justifyContent: 'flex-end',
+                  }}>{text} 
+                </Box>
+              <Box
+              component="p"
+              sx={{
+                bgcolor:'#f0e68c',
+                boxShadow: 1,
+                borderRadius: 2,
+                p: 2,
+                width: 'fit-content',
+                justifyContent: 'flex-start',
+              }}>
+                {res}
+              </Box>
+            </div>
+            
+          </Box>
+
+          <Paper
+            component="form"
+            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '80%' }}
+          >
+            <InputBase
+              sx={{ ml: 1, 
+                  flex: 1,}}
+              placeholder="メッセージを入力"
+              inputProps={{ 'aria-label': 'search google maps' }}
+              inputRef={ inputEL }
+            />
+            <IconButton onClick={ send }  color='primary'>
+              <SendIcon />
+            </IconButton>
+            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+              <SPEACH/>
+        </Paper>
+
+        
         </div>
-      </div>
+      </Stack>
       <div className="result">
-        {!flag ?  (<p></p>) : (<p>結果 : 布教 {result} </p>)}
+        {!flag ?  (<p></p>) 
+          : (
+          <>
+            <p>結果 : 布教{result} </p>
+            <Button onClick={ initState }>やり直す</Button>
+          </>
+          )}
       </div>
     </>
   )
