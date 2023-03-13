@@ -1,21 +1,23 @@
 import Button from '@mui/material/Button';
 import { React, useState, useRef } from 'react'
-import SPEACH from './speach_rec';
+// import SPEACH from './speach_rec';
 import SendIcon from '@mui/icons-material/Send';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import 'simplebar/dist/simplebar.css';
+import MicIcon from '@mui/icons-material/Mic';
+import IconButton from '@mui/material/Button';
+import StopIcon from '@mui/icons-material/Stop';
+import HEADER from '../home/header';
 
 const TALK = (props) => {
 
   const inputEL = useRef(null);
   const themes = ['ハッカソン'];
-  const chatSystem = ["今からあなたは説得されます。あなたは相手の言うことに対して肯定的であってください。"
-                      ,"今からあなたは説得されます。あなたは相手の言うことに対して否定的であってください。"]
+  const chatSystem = ["あなたは小学生です。馬鹿なふりをしてください。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して肯定的であってください。"
+                      ,"あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して否定的であってください。もし、相手の説明が論理的であった場合は、負けましたと言ってください。"]
 
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[1]}]);
   const [text, setText] = useState('');
@@ -25,7 +27,19 @@ const TALK = (props) => {
   const [textFlag, setTextFlag] = useState(true)
   const [result,setResult] = useState('失敗')
 
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition ();
+  const [recFlag,setRecFlag] = useState(false);
+  
+  recognition.lang = "ja";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = ({ results }) => {
+      setText(results[0][0].transcript);
+  };
+
   async function sendPrompt(prompt = []) {
+    console.log(prompt)
     let API_KEY = process.env.REACT_APP_API_KEY;
     // promptがない場合
     if (!prompt) return
@@ -38,7 +52,7 @@ const TALK = (props) => {
       body: JSON.stringify({
         "model": 'gpt-3.5-turbo',
         "messages": prompt,
-        "max_tokens": 150, // 出力される文章量の最大値（トークン数） max:4096
+        "max_tokens": 100, // 出力される文章量の最大値（トークン数） max:4096
         "temperature": 1.05, // 単語のランダム性 min:0.1 max:2.0
         "top_p": 1, // 単語のランダム性 min:-2.0 max:2.0
         "frequency_penalty": 0.0, // 単語の再利用 min:-2.0 max:2.0
@@ -48,7 +62,6 @@ const TALK = (props) => {
     })
 
     const data = await response.json()
-    console.log(data)
     setRes(data.choices[0].message.content)
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
             {"role" : "assistant", "content": data.choices[0].message.content}])
@@ -68,6 +81,18 @@ const TALK = (props) => {
     }
   };
 
+  const speechSend = () => {
+    setTextFlag(true);
+    setRes('');
+    sendPrompt([...chatLogs, {"role" : "user", "content": text}]);
+    setCnt(++cnt);
+    if (cnt === 5){
+      setFlag(true);
+      //成功失敗判定を組み込む
+      setResult('成功')
+    }
+  };
+
   const initState = () => {
     setCnt(0);
     setChat([{"role": "system","content": chatSystem[1]}]);
@@ -77,7 +102,8 @@ const TALK = (props) => {
 }
 
   return (
-    <>      
+    <>
+      <HEADER/>  
       <header>
           <h2>テーマ : {themes[0]}</h2>
           <h2>ターン {cnt}/5</h2>
@@ -108,7 +134,7 @@ const TALK = (props) => {
         <Stack direction="column" 
             spacing={0} 
             sx = {{
-              width: '90%'
+              width: '90%',
         }}>
           {/* チャットログ */}
           <Box
@@ -117,7 +143,7 @@ const TALK = (props) => {
               boxShadow: 1,
               borderRadius: 2,
               p: 2,
-              height: 560,
+              height: 630,
               width:'90%',
               overflow: "hidden",
               overflowY: "scroll",
@@ -131,6 +157,7 @@ const TALK = (props) => {
                 if (value.role === "system"){
                   return
                 }
+
                 //ユーザ側のメッセージ
                 if (value.role === 'user'){
                   return (
@@ -148,6 +175,7 @@ const TALK = (props) => {
                     {value.content} 
                   </Box>
                 )}
+
                 //chatGPT側のメッセージ
                 if (value.role === "assistant"){
                   return  (
@@ -213,12 +241,29 @@ const TALK = (props) => {
             placeholder="メッセージを入力"
             inputProps={{ 'aria-label': 'search google maps' }}
             inputRef={ inputEL }
+            onKeyDown={(event) => {
+              if (!event.nativeEvent.isComposing  && event.key === 'Enter')
+              {
+                event.preventDefault();
+                send();
+              }
+            }}
           />
-          <IconButton onClick={ send }  color='primary'>
+          <IconButton onClick={()=>{send();}} color='primary'>
             <SendIcon />
           </IconButton>
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            <SPEACH/>
+            <div className="voice-input">
+                {!recFlag ?(
+                    <IconButton onClick={() =>{recognition.start();setRecFlag(!recFlag)}}  color='primary'>
+                        <MicIcon />
+                    </IconButton>
+                ):(
+                    <IconButton onClick={() =>{recognition.stop();setRecFlag(!recFlag);speechSend();}}  color='error'>
+                        <StopIcon />
+                    </IconButton>
+                )}
+            </div>
           </Paper>
       </Stack>
     </Stack>

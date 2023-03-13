@@ -1,4 +1,4 @@
-import {React ,useState} from 'react'
+import {React ,useState, createContext} from 'react'
 import MicIcon from '@mui/icons-material/Mic';
 import IconButton from '@mui/material/Button';
 import StopIcon from '@mui/icons-material/Stop';
@@ -6,9 +6,9 @@ import StopIcon from '@mui/icons-material/Stop';
 const SPEACH = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition ();
-
-    const [text,setText] = useState('None');
+    const [text,setText] = useState('');
     const [recFlag,setRecFlag] = useState(false);
+    
     recognition.lang = "ja";
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -35,4 +35,5 @@ const SPEACH = () => {
     </>
     )
 }
+
 export default SPEACH
