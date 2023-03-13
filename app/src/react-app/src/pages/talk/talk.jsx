@@ -8,19 +8,21 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import 'simplebar/dist/simplebar.css';
 
 const TALK = (props) => {
 
   const inputEL = useRef(null);
   const themes = ['ハッカソン'];
-
   const chatSystem = ["今からあなたは説得されます。あなたは相手の言うことに対して肯定的であってください。"
                       ,"今からあなたは説得されます。あなたは相手の言うことに対して否定的であってください。"]
+
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[1]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
   let [cnt,setCnt] = useState(1);
   const [flag,setFlag] = useState(false)
+  const [textFlag, setTextFlag] = useState(true)
   const [result,setResult] = useState('失敗')
 
   async function sendPrompt(prompt = []) {
@@ -50,10 +52,13 @@ const TALK = (props) => {
     setRes(data.choices[0].message.content)
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
             {"role" : "assistant", "content": data.choices[0].message.content}])
+    setTextFlag(false)
   };
   
   const send = () => {
+    setTextFlag(true)
     setText(inputEL.current.value);
+    setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
     setCnt(++cnt);
     if (cnt === 5){
@@ -73,85 +78,161 @@ const TALK = (props) => {
 
   return (
     <>      
-      <div className="chat-head">
-        <h1>テーマ : {themes[0]}</h1>
-        <h2>ターン {cnt}/5</h2>
-      </div>
-      <Stack direction="row" spacing={2}>
-        <div className="chat-body-left" style={{height:'80%',}}>
-          {/* <img src='https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg' alt="ひろゆき"></img> */}
-        </div>
-        <div className='chat-body-right' style={{width:'100%'}}>
+      <header>
+          <h2>テーマ : {themes[0]}</h2>
+          <h2>ターン {cnt}/5</h2>
+      </header>
+
+      <Stack direction="row" 
+            spacing={2} 
+            sx = {{
+              height: '100%',
+      }}>
+        {/* 対話キャラクター */}
+        <Box
+            sx={{
+              bgcolor:'#fff',
+              boxShadow: 1,
+              borderRadius: 2,
+              p: 2,
+              height: '100%',
+              width:'90%',
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <img src='https://dol.ismcdn.jp/mwimgs/a/3/400/img_77d68debc9d07e586174db513d3e8577411216.jpg' alt="ひろゆき"></img>
+        </Box>
+
+        {/* チャット画面 */}
+        <Stack direction="column" 
+            spacing={0} 
+            sx = {{
+              width: '90%'
+        }}>
+          {/* チャットログ */}
           <Box
             sx={{
               bgcolor:'#b0c4de',
               boxShadow: 1,
               borderRadius: 2,
               p: 2,
-              minWidth: 300,
-              height: '90%',
-              width:'80%',
+              height: 560,
+              width:'90%',
+              overflow: "hidden",
+              overflowY: "scroll",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <div className="chat-log">
-              <Box
-                component="p"
-                  sx={{
-                    bgcolor:'#90ee90',
-                    boxShadow: 1,
-                    borderRadius: 2,
-                    p: 2,
-                    width: 'fit-content',
-                    justifyContent: 'flex-end',
-                  }}>{text} 
-                </Box>
-              <Box
-              component="p"
-              sx={{
-                bgcolor:'#f0e68c',
-                boxShadow: 1,
-                borderRadius: 2,
-                p: 2,
-                width: 'fit-content',
-                justifyContent: 'flex-start',
-              }}>
-                {res}
-              </Box>
+            <div>
+              {chatLogs.map((value,index) => {
+                //プロンプトは非表示
+                if (value.role === "system"){
+                  return
+                }
+                //ユーザ側のメッセージ
+                if (value.role === 'user'){
+                  return (
+                  <Box
+                    component="p"
+                    sx={{
+                      bgcolor:'#90ee90',
+                      boxShadow: 1,
+                      borderRadius: 2,
+                      p: 2,
+                      width: 'fit-content',
+                    }}
+                    key={index}
+                  >
+                    {value.content} 
+                  </Box>
+                )}
+                //chatGPT側のメッセージ
+                if (value.role === "assistant"){
+                  return  (
+                  <Box
+                    component="p"
+                    sx={{
+                      bgcolor:'#f0e68c',
+                      boxShadow: 1,
+                      borderRadius: 2,
+                      p: 2,
+                      width: 'fit-content',
+                      }}
+                    key={index}
+                  >
+                    {value.content}
+                  </Box>
+              )}
+              })}
+              {textFlag ? (
+                <div>
+                  {text ? (<Box
+                  component="p"
+                    sx={{
+                      bgcolor:'#90ee90',
+                      boxShadow: 1,
+                      borderRadius: 2,
+                      p: 2,
+                      width: 'fit-content',
+                    }}
+                    >{text} 
+                  </Box>):(
+                  <div></div>
+                  )}
+                  {res ? (
+                  <Box
+                    component="p"
+                    sx={{
+                      bgcolor:'#f0e68c',
+                      boxShadow: 1,
+                      borderRadius: 2,
+                      p: 2,
+                      width: 'fit-content'}}
+                    >
+                    {res}
+                  </Box>):(
+                    <div></div>
+                  )}
+                </div>
+              ):(
+                <div></div>
+                )}
             </div>
-            
-          </Box>
+        </Box>
 
-          <Paper
-            component="form"
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '80%' }}
-          >
-            <InputBase
-              sx={{ ml: 1, 
-                  flex: 1,}}
-              placeholder="メッセージを入力"
-              inputProps={{ 'aria-label': 'search google maps' }}
-              inputRef={ inputEL }
-            />
-            <IconButton onClick={ send }  color='primary'>
-              <SendIcon />
-            </IconButton>
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-              <SPEACH/>
-        </Paper>
-
-        
-        </div>
+        {/* text入力 */}
+        <Paper
+          component="form"
+          sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '90%' }}
+        >
+          <InputBase
+            sx={{ ml: 1, 
+                flex: 1,}}
+            placeholder="メッセージを入力"
+            inputProps={{ 'aria-label': 'search google maps' }}
+            inputRef={ inputEL }
+          />
+          <IconButton onClick={ send }  color='primary'>
+            <SendIcon />
+          </IconButton>
+          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <SPEACH/>
+          </Paper>
       </Stack>
-      <div className="result">
-        {!flag ?  (<p></p>) 
-          : (
-          <>
-            <p>結果 : 布教{result} </p>
-            <Button onClick={ initState }>やり直す</Button>
-          </>
-          )}
-      </div>
-    </>
+    </Stack>
+
+    <div className="result">
+          {!flag ?  (<p></p>) 
+            : (
+            <>
+              <h1>結果 : 布教{result} </h1>
+              <Button onClick={ initState }>やり直す</Button>
+            </>
+            )}
+    </div>
+  </>
   )
 };
 

@@ -10,6 +10,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Amplify } from 'aws-amplify';
 import config from './aws-exports';
 import { Authenticator } from "@aws-amplify/ui-react";
+
+import './App.css';
 Amplify.configure(config);
 
 
