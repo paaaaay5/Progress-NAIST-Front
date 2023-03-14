@@ -17,8 +17,8 @@ import themeIm from './assets/themes/themeOnly.png';
 
 const HOME = () => {
     const navigate = useNavigate();
-    const img_list = ['https://dic.nicovideo.jp/oekaki/836138.png',
-                    'https://hochi.news/images/2022/12/21/20221221-OHT1I51332-L.jpg',
+    const img_list = ['https://hochi.news/images/2022/12/21/20221221-OHT1I51332-L.jpg',
+                    'https://pbs.twimg.com/profile_images/1476938674612805637/Z9-fGmey_400x400.jpg',
                     'https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg'];
 
     const level_img = [easyIM,normalIM,hardIM];
