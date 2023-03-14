@@ -7,29 +7,24 @@ const AUDIO = () => {
   const [audioData, setAudioData] = useState()
 
   // 文字列からQueryを作り出す
-  const createQuery = async () => {
-    const res = await superagent
-      .post('http://74.235.24.142:80/audio_query')
-      .query({ speaker: 1, text: inputText })
-    if (!res) return
-
+  const createQuery2 = async () => {
+    const res = await fetch('https://20.191.178.147:50021/audio_query?text=' + inputText + "&speaker=1",{
+      method: 'POST',
+      mode: 'cors',
+      credentials: "include",
+      headers:{
+        'Content-Type': 'application/json',
+      }
+    }
+    )
+    console.log(res)
     setQueryJson(res.body)
   }
-  async function sendPrompt() {
-    const getQuery = await fetch('http://74.235.24.142:80/audio_query', {
-        method : 'POST',
-        mode : 'cros',
-        credentials: true,
-        headers :{
-            
-        }
-        
-  })
-}
+
   // Queryから合成音声を作り出す
   const createVoice = async () => {
     const res = await superagent
-      .post('http://74.235.24.142:80/synthesis')
+      .post('https://20.191.178.147:50021/synthesis')
       .query({ speaker: 1 })
       .send(queryJson)
       .responseType('blob')
@@ -40,7 +35,7 @@ const AUDIO = () => {
   }
 
   return (
-    <div className='App-header'>
+    <div className='AUDIO-header'>
       <div>
         <h2>読み上げたい文章を入力</h2>
         <textarea 
@@ -55,7 +50,7 @@ const AUDIO = () => {
         <div>
           <p>↓</p>
           <h2>文章からクエリデータを作成</h2>
-          <button onClick={createQuery}>クエリ作成</button>
+          <button  onClick={createQuery2}>クエリ作成</button>
         </div>
       ) : null}
 

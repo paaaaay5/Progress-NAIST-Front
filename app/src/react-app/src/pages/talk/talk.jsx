@@ -10,28 +10,33 @@ import Box from '@mui/material/Box';
 import MicIcon from '@mui/icons-material/Mic';
 import IconButton from '@mui/material/Button';
 import StopIcon from '@mui/icons-material/Stop';
-import {Grid} from '@mui/material'
+import {Grid, Typography} from '@mui/material'
 import HEADER from '../header/header';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
+import profilePost from './text2speach';
+
+import resultWinIm from './assets/result_win.png';
+import resultLoseIm from './assets/result_lose.png';
 
 const TALK = () => {
   const location = useLocation();
   const level = location.state.level;
   const img_url = location.state.img_url;
+  const theme = location.state.theme;
+  const navigate = useNavigate();
 
   const inputEL = useRef(null);
-  const themes = ['ハッカソン'];
-  const chatSystem = ["あなたはクロちゃんです。馬鹿なふりをしてください。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して肯定的であってください。",
-                      "あなたはHIKAKINです。普通の人のふりをしてください。あなたの口癖は'ブンブンハローYoutube'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して中立的であってください。",
-                      "あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して否定的であってください。"]
+  const chatSystem = ["あなたはクロちゃんです。馬鹿なふりをしてください。今からあなたは"+ theme +"について説得されます。あなたは相手の言うことに対して肯定的であってください。文章は完全であってください。",
+                      "あなたはHIKAKINです。普通の人のふりをしてください。あなたの口癖は'ブンブンハローYoutube'です。今からあなたは"+ theme +"について説得されます。あなたは相手の言うことに対して中立的であってください。",
+                      "あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたは"+ theme + "について説得されます。あなたは相手の言うことに対して否定的であってください。"]
 
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[level]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
   let [cnt,setCnt] = useState(1);
-  const [flag,setFlag] = useState(false)
+  const [flag,setFlag] = useState(true)
   const [textFlag, setTextFlag] = useState(true)
-  const [result,setResult] = useState('失敗')
+  const [result,setResult] = useState(false)
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition ();
@@ -58,7 +63,7 @@ const TALK = () => {
       body: JSON.stringify({
         "model": 'gpt-3.5-turbo',
         "messages": prompt,
-        "max_tokens": 100, // 出力される文章量の最大値（トークン数） max:4096
+        "max_tokens": 1000, // 出力される文章量の最大値（トークン数） max:4096
         "temperature": 1.05, // 単語のランダム性 min:0.1 max:2.0
         "top_p": 1, // 単語のランダム性 min:-2.0 max:2.0
         "frequency_penalty": 0.0, // 単語の再利用 min:-2.0 max:2.0
@@ -71,6 +76,7 @@ const TALK = () => {
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
             {"role" : "assistant", "content": data.choices[0].message.content}])
     setTextFlag(false)
+    profilePost(data.choices[0].message.content);
   };
   
   const send = () => {
@@ -79,10 +85,10 @@ const TALK = () => {
     setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
     setCnt(++cnt);
-    if (cnt === 5){
-      setFlag(true);
+    if (cnt >= 5){
+      setFlag(false);
       //成功失敗判定を組み込む
-      setResult('成功')
+      //sendPrompt([...chatLogs, {"role" : "user", "content": 'これまでの会話を通してあなたは私の説明に納得しましたか?"はい"か"いいえ"で答えてください'}]);
     }
   };
 
@@ -94,14 +100,13 @@ const TALK = () => {
     if (cnt === 5){
       setFlag(true);
       //成功失敗判定を組み込む
-
-      setResult('成功')
+      setResult(false)
     }
   };
 
   const initState = () => {
     setCnt(0);
-    setChat([{"role": "system","content": chatSystem[1]}]);
+    setChat([{"role": "system","content": chatSystem[level]}]);
     setText('');
     setRes('');
     setFlag(!flag);
@@ -109,17 +114,21 @@ const TALK = () => {
 
   return (
     <>
-      <HEADER/> 
-      <Grid container spacing={2}>
-        <Grid item xs={2}>
+      <HEADER/>
+      {flag ?(
+        <div>
+        <Box>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant='h3' sx={{'m':'auto', textAlign: 'center',}}>テーマ : {theme}</Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant='h3' sx={{'m':'auto', textAlign: 'center',}}>ターン {cnt}/5</Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={8}>
-          <Box sx={{'m':'auto', textAlign: 'center',}}>テーマ : {themes[0]}</Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box>ターン {cnt}/5</Box>
-        </Grid>
-      </Grid>
+      </Box>
       <Stack direction="row" 
             spacing={2} 
             sx = {{
@@ -133,7 +142,7 @@ const TALK = () => {
               borderRadius: 2,
               p: 2,
               height: '100%',
-              width:'90%',
+              width:'80%',
               display: "flex",
               flexDirection: "column",
             }}
@@ -172,68 +181,77 @@ const TALK = () => {
                 //ユーザ側のメッセージ
                 if (value.role === 'user'){
                   return (
-                  <Box
-                    component="p"
-                    sx={{
-                      bgcolor:'#90ee90',
-                      boxShadow: 1,
-                      borderRadius: 2,
-                      p: 2,
-                      width: 'fit-content',
-                      textAlign: 'right'
-                    }}
-                    key={index}
-                  >
+                  <Stack direction={'row-reverse'}>
+                    <Box
+                      component="p"
+                      sx={{
+                        bgcolor:'#90ee90',
+                        boxShadow: 1,
+                        borderRadius: 2,
+                        p: 2,
+                        width: 'fit-content',
+                        textAlign: 'right'
+                      }}
+                      key={index}
+                    >
                     {value.content} 
                   </Box>
+                  </Stack>
                 )}
 
                 //chatGPT側のメッセージ
                 if (value.role === "assistant"){
                   return  (
-                  <Box
-                    component="p"
-                    sx={{
-                      bgcolor:'#f0e68c',
-                      boxShadow: 1,
-                      borderRadius: 2,
-                      p: 2,
-                      width: 'fit-content',
-                      textAlign: 'left'
-                      }}
-                    key={index}
-                  >
-                    {value.content}
-                  </Box>
+                  <Stack direction={'row'}>
+                    <Box
+                      component="p"
+                      sx={{
+                        bgcolor:'#f0e68c',
+                        boxShadow: 1,
+                        borderRadius: 2,
+                        p: 2,
+                        width: 'fit-content',
+                        textAlign: 'left'
+                        }}
+                      key={index}
+                    >
+                      {value.content}
+                    </Box>
+                  </Stack>
               )}
               })}
               {textFlag ? (
                 <div>
-                  {text ? (<Box
-                  component="p"
-                    sx={{
-                      bgcolor:'#90ee90',
-                      boxShadow: 1,
-                      borderRadius: 2,
-                      p: 2,
-                      width: 'fit-content',
-                    }}
-                    >{text} 
-                  </Box>):(
+                  {text ? (
+                    <Stack direction={'row-reverse'}>
+                      <Box
+                        component="p"
+                        sx={{
+                          bgcolor:'#90ee90',
+                          boxShadow: 1,
+                          borderRadius: 2,
+                          p: 2,
+                          width: 'fit-content',
+                        }}
+                        >{text} 
+                      </Box>
+                  </Stack>):(
                   <div></div>
                   )}
                   {res ? (
-                  <Box
-                    component="p"
-                    sx={{
-                      bgcolor:'#f0e68c',
-                      boxShadow: 1,
-                      borderRadius: 2,
-                      p: 2,
-                      width: 'fit-content'}}
-                    >
-                    {res}
-                  </Box>):(
+                  <Stack direction={'row'}>
+                    <Box
+                      component="p"
+                      sx={{
+                        bgcolor:'#f0e68c',
+                        boxShadow: 1,
+                        borderRadius: 2,
+                        p: 2,
+                        width: 'fit-content'}}
+                      >
+                      {res}
+                    </Box>
+                  </Stack>):(
                     <div></div>
                   )}
                 </div>
@@ -280,16 +298,35 @@ const TALK = () => {
         </Paper>
       </Stack>
     </Stack>
-
-    <div className="result">
-          {!flag ?  (<p></p>) 
-            : (
-            <>
-              <h1>結果 : 布教{result} </h1>
-              <Button onClick={ initState }>やり直す</Button>
-            </>
+        </div>
+      ):(
+        <div>
+          <Box sx={{
+            justifyContent: 'center',
+            display: 'flex',
+            mt:10.
+            }}>
+            {result ? (
+              <img src={resultWinIm} style={{width:'60%'}}></img>
+              ):(
+              <img src={resultLoseIm} style={{width:'60%'}}></img>
             )}
-    </div>
+          </Box>
+          <Box sx={{
+            justifyContent: 'center',
+            display: 'flex',}}>
+          <Button onClick={() => navigate('/home') } 
+                variant="outlined"   
+                sx={{
+                    width: '15%',
+                    color: '#fff',
+                    bgcolor:'#000',
+                    height:100,
+                    fontSize: 24,
+                }}>ホームに戻る</Button>
+          </Box>
+        </div>
+      )}
   </>
   )
 };

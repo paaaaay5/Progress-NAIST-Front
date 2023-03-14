@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import {Stack, Box } from '@mui/material';
-import AUDIO from '../talk/audio';
+import AUDIO from '../talk/audio.jsx';
 
 const TOP = () => {
     const navigate = useNavigate();
@@ -27,15 +27,21 @@ const TOP = () => {
                 sx={{
                     width: '15%',
                     color: '#fff',
-                    bgcolor:'#000'
+                    bgcolor:'#000',
+                    width: '15%',
+                    height:70,
+                    fontSize: 24,
                 }}>ログイン</Button>
-            <Button onClick={() => navigate('/talk')} 
+            <Button onClick={() => navigate('/talk',{state:{level:0,img_url:'https://hochi.news/images/2022/12/21/20221221-OHT1I51332-L.jpg'}})} 
                 variant="outlined"
                 sx={{
                     width: '15%',
                     color: '#000',
                     bgcolor:'#fff',
-                    outlineColor :'#000'
+                    outlineColor :'#000',
+                    width: '15%',
+                    height:70,
+                    fontSize: 24,
                 }}>使ってみる</Button>
         </Stack>
         {/* <AUDIO/> */}

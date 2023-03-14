@@ -20,6 +20,12 @@
           "appId": "d24quhvgxi96vw",
           "type": "manual"
         }
+      },
+      "api": {
+        "arocup": {}
+      },
+      "storage": {
+        "s3cb748edc": {}
       }
     }
   }

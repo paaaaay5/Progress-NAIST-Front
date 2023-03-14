@@ -9,6 +9,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+// import { API } from 'aws-amplify';
 
 export default function HEADER() {
     const {signOut,user} = useAuthenticator((context) => [
@@ -33,10 +34,6 @@ export default function HEADER() {
         <Button onClick={()=> navigate('/')}>
           <img src='https://calligra.design/m/c0126_2/c0126_2_0.svg' style={{height:30}}></img>
         </Button>
-        {/* <Box sx={{display:'flex',justify:'center'}}>
-            <Button onClick={() => navigate('/torophy')} color='inherit'>実績</Button>
-            <Button onClick={signOut} color='inherit'>サインアウト</Button>
-        </Box> */}
         { user && (
         <Box sx={{'ml':'auto'}}>
             <IconButton

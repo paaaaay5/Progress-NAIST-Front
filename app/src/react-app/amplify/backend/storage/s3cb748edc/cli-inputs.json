@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3cb748edc",
+  "policyUUID": "cb748edc",
+  "bucketName": "arocupf9216d336be042eea4acc1b139f0dfe2",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
