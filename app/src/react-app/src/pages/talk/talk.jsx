@@ -55,13 +55,11 @@ const TALK = () => {
   
     //画像のダイナミックインポート
     const loadImage = async(ind) => {
-      console.log(`./assets/turns/${ind}.png`)
       const response = await import(`./assets/turns/${ind}.png`)
       setTurnImage(response.default)
   }
 
   async function sendPrompt(prompt = []) {
-    console.log(prompt)
     let API_KEY = process.env.REACT_APP_API_KEY;
     // promptがない場合
     if (!prompt) return

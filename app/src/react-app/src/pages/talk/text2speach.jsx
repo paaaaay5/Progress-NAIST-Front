@@ -30,7 +30,6 @@ export default async function profilePost (text){
     try {
       var blobUrl = base64ToBlobUrl(res.audioContent)
       var audio = new Audio()
-      console.log(1)
       audio.src = blobUrl
       audio.play()
     } catch(e) {
