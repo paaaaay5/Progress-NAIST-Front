@@ -15,7 +15,6 @@ const TOP = () => {
             mu:20
         }}>
             <img src='https://calligra.design/m/c0126_2/c0126_2_0.svg'></img>
-            {/* <p>相手を論破してどんどん布教しよう!!</p> */}
         </Box>
         <Stack
         direction="row" 

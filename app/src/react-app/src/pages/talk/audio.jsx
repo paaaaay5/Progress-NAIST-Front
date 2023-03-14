@@ -15,7 +15,17 @@ const AUDIO = () => {
 
     setQueryJson(res.body)
   }
-
+  async function sendPrompt() {
+    const getQuery = await fetch('http://74.235.24.142:80/audio_query', {
+        method : 'POST',
+        mode : 'cros',
+        credentials: true,
+        headers :{
+            
+        }
+        
+  })
+}
   // Queryから合成音声を作り出す
   const createVoice = async () => {
     const res = await superagent

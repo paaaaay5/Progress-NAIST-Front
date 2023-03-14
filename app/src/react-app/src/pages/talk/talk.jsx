@@ -10,16 +10,22 @@ import Box from '@mui/material/Box';
 import MicIcon from '@mui/icons-material/Mic';
 import IconButton from '@mui/material/Button';
 import StopIcon from '@mui/icons-material/Stop';
-import HEADER from '../home/header';
+import {Grid} from '@mui/material'
+import HEADER from '../header/header';
+import { useLocation } from "react-router-dom";
 
-const TALK = (props) => {
+const TALK = () => {
+  const location = useLocation();
+  const level = location.state.level;
+  const img_url = location.state.img_url;
 
   const inputEL = useRef(null);
   const themes = ['ハッカソン'];
-  const chatSystem = ["あなたは小学生です。馬鹿なふりをしてください。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して肯定的であってください。"
-                      ,"あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して否定的であってください。もし、相手の説明が論理的であった場合は、負けましたと言ってください。"]
+  const chatSystem = ["あなたはクロちゃんです。馬鹿なふりをしてください。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して肯定的であってください。",
+                      "あなたはHIKAKINです。普通の人のふりをしてください。あなたの口癖は'ブンブンハローYoutube'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して中立的であってください。",
+                      "あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたはハッカソンについて説得されます。あなたは相手の言うことに対して否定的であってください。"]
 
-  const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[1]}]);
+  const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[level]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
   let [cnt,setCnt] = useState(1);
@@ -60,7 +66,6 @@ const TALK = (props) => {
         //"stop": [" Human:", " AI:"] // 途中で生成を停止する単語
       }),
     })
-
     const data = await response.json()
     setRes(data.choices[0].message.content)
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
@@ -89,6 +94,7 @@ const TALK = (props) => {
     if (cnt === 5){
       setFlag(true);
       //成功失敗判定を組み込む
+
       setResult('成功')
     }
   };
@@ -103,12 +109,17 @@ const TALK = (props) => {
 
   return (
     <>
-      <HEADER/>  
-      <header>
-          <h2>テーマ : {themes[0]}</h2>
-          <h2>ターン {cnt}/5</h2>
-      </header>
-
+      <HEADER/> 
+      <Grid container spacing={2}>
+        <Grid item xs={2}>
+        </Grid>
+        <Grid item xs={8}>
+          <Box sx={{'m':'auto', textAlign: 'center',}}>テーマ : {themes[0]}</Box>
+        </Grid>
+        <Grid item xs={2}>
+          <Box>ターン {cnt}/5</Box>
+        </Grid>
+      </Grid>
       <Stack direction="row" 
             spacing={2} 
             sx = {{
@@ -127,7 +138,7 @@ const TALK = (props) => {
               flexDirection: "column",
             }}
           >
-            <img src='https://dol.ismcdn.jp/mwimgs/a/3/400/img_77d68debc9d07e586174db513d3e8577411216.jpg' alt="ひろゆき"></img>
+            <img src= {img_url} style={{width:'100%'}} alt="相手"></img>
         </Box>
 
         {/* チャット画面 */}
@@ -143,7 +154,7 @@ const TALK = (props) => {
               boxShadow: 1,
               borderRadius: 2,
               p: 2,
-              height: 630,
+              height: 500,
               width:'90%',
               overflow: "hidden",
               overflowY: "scroll",
@@ -169,6 +180,7 @@ const TALK = (props) => {
                       borderRadius: 2,
                       p: 2,
                       width: 'fit-content',
+                      textAlign: 'right'
                     }}
                     key={index}
                   >
@@ -187,6 +199,7 @@ const TALK = (props) => {
                       borderRadius: 2,
                       p: 2,
                       width: 'fit-content',
+                      textAlign: 'left'
                       }}
                     key={index}
                   >
@@ -264,7 +277,7 @@ const TALK = (props) => {
                     </IconButton>
                 )}
             </div>
-          </Paper>
+        </Paper>
       </Stack>
     </Stack>
 

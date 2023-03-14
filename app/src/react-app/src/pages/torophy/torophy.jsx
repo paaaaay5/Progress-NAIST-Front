@@ -1,8 +1,12 @@
 import React from 'react'
+import HEADER from '../header/header'
 
 const TOROPHY = () => {
   return (
-    <div>TOROPHY</div>
+    <>
+      <HEADER/>
+      <div>TOROPHY</div>
+    </>
   )
 }
 
