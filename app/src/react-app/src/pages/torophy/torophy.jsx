@@ -1,6 +1,6 @@
 import React from 'react'
 import HEADER from '../header/header'
-import { createTodo as createMutation, deleteTodo as deleteMutation } from '../../graphql/mutations';
+//import { createTodo as createMutation, deleteTodo as deleteMutation } from '../../graphql/mutations';
 import { Button }  from '@mui/material'
 
 // async function fetchNotes() {

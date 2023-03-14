@@ -6,11 +6,8 @@ export const onCreateTodo = /* GraphQL */ `
     onCreateTodo(filter: $filter) {
       id
       name
-      getLevels {
-        hackthon
-        naist
-      }
-      image
+      theme
+      level
       createdAt
       updatedAt
     }
@@ -21,11 +18,8 @@ export const onUpdateTodo = /* GraphQL */ `
     onUpdateTodo(filter: $filter) {
       id
       name
-      getLevels {
-        hackthon
-        naist
-      }
-      image
+      theme
+      level
       createdAt
       updatedAt
     }
@@ -36,11 +30,8 @@ export const onDeleteTodo = /* GraphQL */ `
     onDeleteTodo(filter: $filter) {
       id
       name
-      getLevels {
-        hackthon
-        naist
-      }
-      image
+      theme
+      level
       createdAt
       updatedAt
     }

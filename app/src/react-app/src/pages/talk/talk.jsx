@@ -85,7 +85,7 @@ const TALK = () => {
     setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
     setCnt(++cnt);
-    if (cnt >= 5){
+    if (cnt > 5){
       setFlag(false);
       //成功失敗判定を組み込む
       //sendPrompt([...chatLogs, {"role" : "user", "content": 'これまでの会話を通してあなたは私の説明に納得しましたか?"はい"か"いいえ"で答えてください'}]);

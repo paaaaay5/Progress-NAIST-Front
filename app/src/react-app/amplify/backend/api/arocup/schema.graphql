@@ -3,11 +3,6 @@ input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONL
 type Todo @model {
   id: ID!
   name: String!
-  getLevels : [Levels]
-  image: String!
-}
-
-type Levels {
-  hackthon : Int!
-  naist : Int!
+  theme: String!
+  level: String!
 }

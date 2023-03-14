@@ -6,11 +6,8 @@ export const getTodo = /* GraphQL */ `
     getTodo(id: $id) {
       id
       name
-      getLevels {
-        hackthon
-        naist
-      }
-      image
+      theme
+      level
       createdAt
       updatedAt
     }
@@ -26,11 +23,8 @@ export const listTodos = /* GraphQL */ `
       items {
         id
         name
-        getLevels {
-          hackthon
-          naist
-        }
-        image
+        theme
+        level
         createdAt
         updatedAt
       }
