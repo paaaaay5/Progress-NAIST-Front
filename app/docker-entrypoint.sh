@@ -11,7 +11,8 @@ if [ ! -e $APP_DIR ]; then
 fi
 
 cd $APP_DIR
-echo "[START] yarn start..."
-yarn start
+echo "[START] npm start..."
+npm install
+npm start
 
 exec "$@"
