@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import { React, useState, useRef } from 'react'
-// import SPEACH from './speach_rec';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
@@ -15,14 +14,18 @@ import HEADER from '../header/header';
 import { useLocation, useNavigate} from "react-router-dom";
 import profilePost from './text2speach';
 
+import themeIm from './assets/themes/themeOnly.png';
 import resultWinIm from './assets/result_win.png';
 import resultLoseIm from './assets/result_lose.png';
+import firstTurnIm from './assets/turns/0.png';
 
 const TALK = () => {
   const location = useLocation();
   const level = location.state.level;
   const img_url = location.state.img_url;
+  const image = location.state.image;
   const theme = location.state.theme;
+
   const navigate = useNavigate();
 
   const inputEL = useRef(null);
@@ -33,10 +36,11 @@ const TALK = () => {
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[level]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
-  let [cnt,setCnt] = useState(1);
+  let [cnt,setCnt] = useState(0);
   const [flag,setFlag] = useState(true)
   const [textFlag, setTextFlag] = useState(true)
   const [result,setResult] = useState(false)
+  const [turnIm, setTurnImage] = useState(firstTurnIm)
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition ();
@@ -48,6 +52,13 @@ const TALK = () => {
   recognition.onresult = ({ results }) => {
       setText(results[0][0].transcript);
   };
+  
+    //画像のダイナミックインポート
+    const loadImage = async(ind) => {
+      console.log(`./assets/turns/${ind}.png`)
+      const response = await import(`./assets/turns/${ind}.png`)
+      setTurnImage(response.default)
+  }
 
   async function sendPrompt(prompt = []) {
     console.log(prompt)
@@ -85,10 +96,10 @@ const TALK = () => {
     setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
     setCnt(++cnt);
-    if (cnt > 5){
+    loadImage(cnt);
+    if (cnt > 4){
       setFlag(false);
       //成功失敗判定を組み込む
-      //sendPrompt([...chatLogs, {"role" : "user", "content": 'これまでの会話を通してあなたは私の説明に納得しましたか?"はい"か"いいえ"で答えてください'}]);
     }
   };
 
@@ -104,31 +115,32 @@ const TALK = () => {
     }
   };
 
-  const initState = () => {
-    setCnt(0);
-    setChat([{"role": "system","content": chatSystem[level]}]);
-    setText('');
-    setRes('');
-    setFlag(!flag);
-}
-
   return (
     <>
       <HEADER/>
       {flag ?(
         <div>
         <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+            </Grid>
+            <Grid item xs={6}>
+              <Stack direction={'row'}>
+                <Box sx={{mt:5,ml:10,justifyContent: 'center',display: 'flex',}}>
+                  <img src= {themeIm} style={{height:100}}></img>
+                </Box>
+                <Box sx={{mt:5,justifyContent: 'center',display: 'flex',}}>
+                    <img src= {image} style={{height:100}}></img>
+                </Box>
+              </Stack>
+            </Grid>
+            <Grid item xs={3}>
+              <Box sx={{mt:5,justifyContent: 'center',display: 'flex'}}>
+                <img src={turnIm} style={{height:70}}></img>
+              </Box>
+            </Grid> 
           </Grid>
-          <Grid item xs={4}>
-            <Typography variant='h3' sx={{'m':'auto', textAlign: 'center',}}>テーマ : {theme}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant='h3' sx={{'m':'auto', textAlign: 'center',}}>ターン {cnt}/5</Typography>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
       <Stack direction="row" 
             spacing={2} 
             sx = {{
@@ -147,7 +159,7 @@ const TALK = () => {
               flexDirection: "column",
             }}
           >
-            <img src= {img_url} style={{width:'100%'}} alt="相手"></img>
+            <img src= {img_url} style={{height:500}} alt="相手"></img>
         </Box>
 
         {/* チャット画面 */}
@@ -156,8 +168,9 @@ const TALK = () => {
             sx = {{
               width: '90%',
         }}>
-          {/* チャットログ */}
-          <Box
+
+        {/* チャットログ */}
+        <Box
             sx={{
               bgcolor:'#b0c4de',
               boxShadow: 1,

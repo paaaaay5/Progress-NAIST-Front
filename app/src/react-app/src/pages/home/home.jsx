@@ -27,6 +27,7 @@ const HOME = () => {
     const [value,setValue] = useState(null);
     const [open, setOpen] = useState(false);
     const [theme,setTheme] = useState('');
+
     const [ThemeFlag,setThemeFlag] = useState(false);
     const anchorEl = useRef(null);
     const [image, setImage] = useState(null)
@@ -132,10 +133,9 @@ const HOME = () => {
                         themes.map((value,index)=> (
                             <MenuItem onClick={() => {
                                 handleClose();
-                                setTheme(value);
                                 setThemeFlag(true);
                                 loadImage(index);
-                                console.log(index);}}>
+                                setTheme(themes[index]);}}>
                             {value}
                             </MenuItem>
                             ))
@@ -150,7 +150,7 @@ const HOME = () => {
             {!ThemeFlag ? (<></>):
                 (<Box sx={{mt:10,justifyContent: 'center',display: 'flex',}}>
                     <Button onClick={() => { 
-                        navigate('/talk',{state:{level:value, img_url:img_list[value],theme:theme}})}} 
+                        navigate('/talk',{state:{level:value, img_url:img_list[value],image:image,theme:theme}})}} 
                         sx={{backgroundColor:'#000'}}>
                     <img src={startIM} style={{width:300}}></img>
                     </Button>
