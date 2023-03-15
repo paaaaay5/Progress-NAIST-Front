@@ -1,6 +1,7 @@
 export default async function profilePost (text){
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
   const url = 'https://texttospeech.googleapis.com/v1/text:synthesize?key=' + API_KEY;
+  
   const data = {
     "input": {
       "text": text

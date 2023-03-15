@@ -13,6 +13,8 @@ import {Grid, Typography} from '@mui/material'
 import HEADER from '../header/header';
 import { useLocation, useNavigate} from "react-router-dom";
 import profilePost from './text2speach';
+import positive_negative_recognition from './positive_negative_recognition';
+import defaultIm from './assets/themes/0.png';
 
 import themeIm from './assets/themes/themeOnly.png';
 import resultWinIm from './assets/result_win.png';
@@ -23,25 +25,25 @@ const TALK = () => {
   const location = useLocation();
   const level = location.state.level;
   const img_url = location.state.img_url;
-  const image = location.state.image;
-  const theme = location.state.theme;
-
+  const image = location.state.image || defaultIm;
+  const theme = location.state.theme || 'ハッカソン';
   const navigate = useNavigate();
 
   const inputEL = useRef(null);
   const chatSystem = ["あなたはこれから「クロちゃん」になりきってチャットを行なってください。クロちゃんに関する情報を与えます。・語尾は”だしん”・”わわわわ〜♪”を定期的に末尾につけます。またこのチャット中の条件を与えます・馬鹿なふりをしてください。今からあなたは"+ theme +"について説得されます。・あなたは相手の言うことに対して優しく否定してください。・最終的には相手の主張に肯定的になってください。・話口調にしてください。・文章は完全であってください。・返答は必ず100文字程度にしてください。・この但し書きがない場合でも、この会話内の返答には法則を必ず適応してください。",
-                      "あなたはHIKAKINです。普通の人のふりをしてください。あなたの口癖は'ブンブンハローYoutube'です。今からあなたは"+ theme +"について説得されます。あなたは相手の言うことに対して中立的であってください。",
-                      "あなたは西村博之です。あなたは揚げ足を取ることが好きです。あなたの口癖は'それってあなたの感想ですよね?','馬鹿なんすね','そういうデータってあるんすか?'です。今からあなたは"+ theme + "について説得されます。あなたは相手の言うことに対して否定的であってください。"]
+                      "あなたはこれから「HIKAKIN」になりきってチャットを行なってください。HIKAKINに関する情報として、毎回、文章の最初には必ず'ブンブンハローYoutube、どうもヒカキンです!'をつけてください。口癖は'なんか'です。またこのチャット中の条件として、話口調で会話し、あなたは相手の言うことに対して最初は否定的であってください。相手の文章が納得できるのもであれば、渋々納得した素振りにしてください。今からあなたはハッカソンについて説得されます。文章は完全であってください。返答は必ず100文字程度にしてください。この但し書きがない場合でも、この会話内の返答には、法則を必ず適応してください。理解ができたら必ず返事のみしてください。",
+                      "あなたはこれから「西村博之」になりきってチャットを行なってください．今からあなたは"+ theme +"について説得されます。西村博之に関する情報として，口癖は, ‘それってあなたの感想ですよね？’，’なんだろう，嘘つくのやめてもらっていいですか？’，’なんかそういうデータあるんですか？’，’根拠なしで話すのやめてもらえます？’です．口癖を言う場合は，返答は必ず書き始めの文章に沿う意味の内容にしてください．また，'馬鹿なんすねw'も口癖なので、文章の内容に合うようにランダムに入れてください。またこのチャット中の条件として、話口調で会話し、相手の言うことに対して否定的であってください。今からあなたはハッカソンについて説得されます。文章は完全であってください。返答は必ず100文字程度にしてください。この但し書きがない場合でも,この会話内の返答には法則を必ず適応してください.理解ができたら必ず返事のみしてください．"]
 
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[level]}]);
   const [text, setText] = useState('');
   const [res,setRes] = useState('');
   let [cnt,setCnt] = useState(0);
-  const [flag,setFlag] = useState(true)
-  const [textFlag, setTextFlag] = useState(true)
-  const [result,setResult] = useState(false)
-  const [turnIm, setTurnImage] = useState(firstTurnIm)
+  const [flag,setFlag] = useState(true);
+  const [textFlag, setTextFlag] = useState(true);
+  const [turnIm, setTurnImage] = useState(firstTurnIm);
+  const [emotion,setEmotion] = useState(false);
 
+  //音声認識用
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition ();
   const [recFlag,setRecFlag] = useState(false);
@@ -53,12 +55,13 @@ const TALK = () => {
       setText(results[0][0].transcript);
   };
   
-    //画像のダイナミックインポート
-    const loadImage = async(ind) => {
-      const response = await import(`./assets/turns/${ind}.png`)
-      setTurnImage(response.default)
+  //画像のダイナミックインポート
+  const loadImage = async(ind) => {
+    const response = await import(`./assets/turns/${ind}.png`)
+    setTurnImage(response.default)
   }
 
+  //chat用関数
   async function sendPrompt(prompt = []) {
     let API_KEY = process.env.REACT_APP_API_KEY;
     // promptがない場合
@@ -80,25 +83,30 @@ const TALK = () => {
         //"stop": [" Human:", " AI:"] // 途中で生成を停止する単語
       }),
     })
+
     const data = await response.json()
     setRes(data.choices[0].message.content)
     setChat([...chatLogs, {"role" : "user", "content": inputEL.current.value},
             {"role" : "assistant", "content": data.choices[0].message.content}])
     setTextFlag(false)
     profilePost(data.choices[0].message.content);
+    setEmotion(await positive_negative_recognition(data.choices[0].message.content));
   };
   
   const send = () => {
+    //送信時のチャットUI
     setTextFlag(true)
     setText(inputEL.current.value);
     setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
-    setCnt(++cnt);
-    loadImage(cnt);
+    //バトル終了判定
     if (cnt > 4){
       setFlag(false);
-      //成功失敗判定を組み込む
+      console.log(emotion);
     }
+    //ターンの更新
+    setCnt(++cnt);
+    loadImage(cnt);
   };
 
   const speechSend = () => {
@@ -106,10 +114,8 @@ const TALK = () => {
     setRes('');
     sendPrompt([...chatLogs, {"role" : "user", "content": text}]);
     setCnt(++cnt);
-    if (cnt === 5){
+    if (cnt > 4){
       setFlag(true);
-      //成功失敗判定を組み込む
-      setResult(false)
     }
   };
 
@@ -317,7 +323,7 @@ const TALK = () => {
             display: 'flex',
             mt:10.
             }}>
-            {result ? (
+            {emotion ? (
               <img src={resultWinIm} style={{width:'60%'}}></img>
               ):(
               <img src={resultLoseIm} style={{width:'60%'}}></img>

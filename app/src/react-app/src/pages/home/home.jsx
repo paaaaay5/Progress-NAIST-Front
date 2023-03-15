@@ -143,7 +143,7 @@ const HOME = () => {
                     </Menu>
                 </Grid>
             </Grid>
-
+    
             <Stack direction={'row'} sx= {{mt:10}}>
             </Stack>
             {/* スタートボタン */}

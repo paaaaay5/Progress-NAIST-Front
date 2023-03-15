@@ -6,6 +6,7 @@
     "@aws-amplify/ui-react": "^4.3.9",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@google-cloud/language": "^5.2.1",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.12",
     "@testing-library/jest-dom": "^5.16.5",
