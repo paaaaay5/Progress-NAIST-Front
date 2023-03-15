@@ -7,6 +7,7 @@ import {Box, Stack,Card,CardContent,Typography,Button,CardActions} from '@mui/ma
 
 const TOROPHY = () => {
   const themes = ['ハッカソン','たけのこの里','きのこの山','NAIST','iphone','Android'];
+  const level = ['初級','中級','上級'];
   const [notes, setNotes] = useState([]);
   const colors = ['#8b4513','#c0c0c0','#ffd700']
   useEffect(() => {
@@ -54,7 +55,7 @@ const TOROPHY = () => {
                     {note.theme}
                   </Typography>
                   <Typography variant="h5" component="div">
-                    {note.level}
+                    {level[note.level] + 'クリア'}
                   </Typography>
                 </CardContent>
               </Card>
