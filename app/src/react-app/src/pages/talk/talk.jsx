@@ -15,11 +15,12 @@ import { useLocation, useNavigate} from "react-router-dom";
 import profilePost from './text2speach';
 import positive_negative_recognition from './positive_negative_recognition';
 import defaultIm from './assets/themes/0.png';
-
 import themeIm from './assets/themes/themeOnly.png';
 import resultWinIm from './assets/result_win.png';
 import resultLoseIm from './assets/result_lose.png';
 import firstTurnIm from './assets/turns/0.png';
+import { API } from 'aws-amplify';
+import { createTodo as createMutation} from '../../graphql/mutations';
 
 const TALK = () => {
   const location = useLocation();
@@ -47,7 +48,7 @@ const TALK = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition ();
   const [recFlag,setRecFlag] = useState(false);
-  
+
   recognition.lang = "ja";
   recognition.continuous = false;
   recognition.interimResults = false;
@@ -59,6 +60,16 @@ const TALK = () => {
   const loadImage = async(ind) => {
     const response = await import(`./assets/turns/${ind}.png`)
     setTurnImage(response.default)
+  }
+  const initform = { name: 'naist', theme: theme, level:level};
+  const [formData, setFormData] = useState(initform);
+
+  //実績送信
+  async function createTodo() {
+    if (!emotion){
+      return
+    }
+    await API.graphql({ query: createMutation, variables: { input: formData }});
   }
 
   //chat用関数
@@ -90,7 +101,7 @@ const TALK = () => {
             {"role" : "assistant", "content": data.choices[0].message.content}])
     setTextFlag(false)
     profilePost(data.choices[0].message.content);
-    setEmotion(await positive_negative_recognition(data.choices[0].message.content));
+    setEmotion(await positive_negative_recognition(data.choices[0].message.content,theme,level));
   };
   
   const send = () => {
@@ -102,7 +113,6 @@ const TALK = () => {
     //バトル終了判定
     if (cnt > 4){
       setFlag(false);
-      console.log(emotion);
     }
     //ターンの更新
     setCnt(++cnt);
@@ -332,7 +342,7 @@ const TALK = () => {
           <Box sx={{
             justifyContent: 'center',
             display: 'flex',}}>
-          <Button onClick={() => navigate('/home') } 
+          <Button onClick={() => {createTodo();navigate('/home');} } 
                 variant="outlined"   
                 sx={{
                     width: '15%',

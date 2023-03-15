@@ -18,7 +18,6 @@ export default function Login() {
 
   return (
     <>
-      <img src='https://calligra.design/m/c0115_2/c0115_2_0.svg' style={{height:100}}></img>
       <View className="auth-wrapper">
         <Authenticator></Authenticator>
       </View>

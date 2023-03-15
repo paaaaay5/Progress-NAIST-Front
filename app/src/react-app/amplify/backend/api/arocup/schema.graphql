@@ -4,5 +4,5 @@ type Todo @model {
   id: ID!
   name: String!
   theme: String!
-  level: String!
+  level: Int!
 }
