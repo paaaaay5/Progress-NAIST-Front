@@ -1,6 +1,6 @@
 import { React, useState, useRef } from 'react'
 import {Grid, Typography, IconButton, Box, Divider, InputBase, Paper, Stack, Button} from '@mui/material'
-import {Send, Mic, Stop, IntegrationInstructions}  from '@mui/icons-material';
+import {Send, Mic, Stop }  from '@mui/icons-material';
 import { useLocation, useNavigate} from "react-router-dom";
 //components
 import HEADER from '../header/header';
@@ -28,7 +28,7 @@ const TALK = () => {
 
   const inputEL = useRef(null);
   const chatSystem = ["あなたはこれから「クロちゃん」になりきってチャットを行なってください。クロちゃんに関する情報を与えます。・語尾は”だしん”・”わわわわ〜♪”を定期的に末尾につけます。またこのチャット中の条件を与えます・馬鹿なふりをしてください。今からあなたは"+ theme +"について説得されます。・あなたは相手の言うことに対して優しく否定してください。・最終的には相手の主張に肯定的になってください。・話口調にしてください。・文章は完全であってください。・返答は必ず100文字程度にしてください。・この但し書きがない場合でも、この会話内の返答には法則を必ず適応してください。",
-                      "あなたはこれから「HIKAKIN」になりきってチャットを行なってください。HIKAKINに関する情報として、毎回、文章の最初には必ず'ブンブンハローYoutube、どうもヒカキンです!'をつけてください。口癖は'なんか'です。またこのチャット中の条件として、話口調で会話し、あなたは相手の言うことに対して最初は否定的であってください。相手の文章が納得できるのもであれば、渋々納得した素振りにしてください。今からあなたはハッカソンについて説得されます。文章は完全であってください。返答は必ず100文字程度にしてください。この但し書きがない場合でも、この会話内の返答には、法則を必ず適応してください。理解ができたら必ず返事のみしてください。",
+                      "あなたはこれから「HIKAKIN」になりきってチャットを行なってください。HIKAKINに関する情報として、毎回、文章の最初には必ず'ブンブンハローYoutube、どうもヒカキンです!'をつけてください。口癖は'なんか'です。またこのチャット中の条件として、話口調で会話し、あなたは相手の言うことに対して最初は否定的であってください。相手の文章が納得できるのもであれば、渋々納得した素振りにしてください。今からあなたは"+ theme +"について説得されます。文章は完全であってください。返答は必ず100文字程度にしてください。この但し書きがない場合でも、この会話内の返答には、法則を必ず適応してください。理解ができたら必ず返事のみしてください。",
                       "あなたはこれから「西村博之」になりきってチャットを行なってください．今からあなたは"+ theme +"について説得されます。西村博之に関する情報として，口癖は, ‘それってあなたの感想ですよね？’，’なんだろう，嘘つくのやめてもらっていいですか？’，’なんかそういうデータあるんですか？’，’根拠なしで話すのやめてもらえます？’です．口癖を言う場合は，返答は必ず書き始めの文章に沿う意味の内容にしてください．また，'馬鹿なんすねw'も口癖なので、文章の内容に合うようにランダムに入れてください。またこのチャット中の条件として、話口調で会話し、相手の言うことに対して否定的であってください。今からあなたはハッカソンについて説得されます。文章は完全であってください。返答は必ず100文字程度にしてください。この但し書きがない場合でも,この会話内の返答には法則を必ず適応してください.理解ができたら必ず返事のみしてください．"]
 
   const [chatLogs, setChat] = useState([{"role": "system","content": chatSystem[level]}]);
@@ -37,6 +37,7 @@ const TALK = () => {
   const [turnIm, setTurnImage] = useState(firstTurnIm);
   const [emotion,setEmotion] = useState(false);
   const [textInputFlag,setTextInputFlag] = useState(false);
+  const [resultflag, setResultflag] = useState(true);
   //音声認識用
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition ();
@@ -46,9 +47,7 @@ const TALK = () => {
   recognition.continuous = false;
   recognition.interimResults = false;
   recognition.onresult = ({ results }) => {
-      // setChat(chatLogs => [...chatLogs,{"role" : "assistant", "content": results[0][0].transcript}])
       inputEL.current.value = results[0][0].transcript;
-      console.log(results[0][0].transcript)
   };
   
   //画像のダイナミックインポート
@@ -78,14 +77,21 @@ const TALK = () => {
       body: JSON.stringify({
         "model": 'gpt-3.5-turbo',
         "messages": prompt,
-        "max_tokens": 100, // 出力される文章量の最大値（トークン数） max:4096
+        "max_tokens": 1000, // 出力される文章量の最大値（トークン数） max:4096
         "temperature": 1.05, // 単語のランダム性 min:0.1 max:2.0
         "top_p": 1, // 単語のランダム性 min:-2.0 max:2.0
         "frequency_penalty": 0.0, // 単語の再利用 min:-2.0 max:2.0
         "presence_penalty": 0.6, // 単語の再利用 min:-2.0 max:2.0
       }),
     })
-    setCnt(++cnt);
+    setCnt(cnt => ++cnt);
+
+    //バトル終了判定
+    if (cnt > 3){
+      setTextInputFlag(true)
+      setFlag(true);
+    }
+    
     loadImage(cnt);
     inputEL.current.value =''
     const data =  await response.json()
@@ -96,22 +102,17 @@ const TALK = () => {
   };
   
   const send = () => {
-    console.log('')
     if (! inputEL.current.value) return
     setChat((chatLogs => [...chatLogs, {"role" : "user", "content": inputEL.current.value}]));
     setTextInputFlag(textInputFlag => !textInputFlag)
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
-    //バトル終了判定
-    if (cnt > 4){
-      setFlag(false);
-    }
   };
 
 
   return (
     <>
       <HEADER/>
-      {flag ?(
+      {resultflag ?(
         <div>
         <Box>
           <Grid container spacing={2}>
@@ -269,8 +270,11 @@ const TALK = () => {
         </Paper>
       </Stack>
     </Stack>
-        </div>
+    {flag ? (<></>):(<Button onClick={()=>{setResultflag(false)}}>結果を確認</Button>)}
+    </div>
       ):(
+        resultflag ? (<></>):
+        (
         <div>
           <Box sx={{
             justifyContent: 'center',
@@ -297,7 +301,7 @@ const TALK = () => {
                 }}>ホームに戻る</Button>
           </Box>
         </div>
-      )}
+      ))}
   </>
   )
 };
