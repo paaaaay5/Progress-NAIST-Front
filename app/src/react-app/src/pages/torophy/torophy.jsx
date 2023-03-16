@@ -27,25 +27,7 @@ const TOROPHY = () => {
         <Box sx={{justifyContent: 'center',flex:'true',m:'auto'}}>
           <img src={achiveIm} style={{height:150}}></img>
         </Box>
-        {/* <Stack direction={'row'} sx={{}}>
-          {
-            themes.map((note,index) => (
-            <Box sx={{width:200, height:500}} key={index}>
-              <Card sx={{ml:3}}>
-                <CardContent>
-                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    {note}
-                  </Typography>
-                  <Typography variant="h5" component="div">
-                    {notes.level || '-'}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            ))
-          }
-        </Stack> */}
-        <Stack direction={'row'} sx={{m:'auto'}}>
+      <Stack direction={'row'} sx={{m:'auto'}}>
           {
             notes.map((note,index) => (
             <Box sx={{width:200, height:500}} key={index}>
