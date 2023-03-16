@@ -1,6 +1,6 @@
 import { React, useState, useRef } from 'react'
 import {Grid, Typography, IconButton, Box, Divider, InputBase, Paper, Stack, Button} from '@mui/material'
-import {SendIcon, MicIcon, StopIcon}  from '@mui/icons-material';
+import {Send, Mic, Stop}  from '@mui/icons-material';
 import { useLocation, useNavigate} from "react-router-dom";
 //components
 import HEADER from '../header/header';
@@ -304,17 +304,17 @@ const TALK = () => {
             }}
           />
           <IconButton onClick={()=>{send();}} color='primary'>
-            <SendIcon />
+            <Send />
           </IconButton>
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <div className="voice-input">
                 {!recFlag ?(
                     <IconButton onClick={() =>{recognition.start();setRecFlag(!recFlag)}}  color='primary'>
-                        <MicIcon />
+                        <Mic />
                     </IconButton>
                 ):(
                     <IconButton onClick={() =>{recognition.stop();setRecFlag(!recFlag);speechSend();}}  color='error'>
-                        <StopIcon />
+                        <Stop />
                     </IconButton>
                 )}
             </div>
