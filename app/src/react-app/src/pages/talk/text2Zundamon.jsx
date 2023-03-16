@@ -21,6 +21,8 @@ import superagent from 'superagent'
   const playmusic = (audioData) => {
     const music = new Audio();
     music.src = window.URL.createObjectURL(audioData);
+    music.pause();
+    music.currentTime = 0;
     music.play();
   }
 

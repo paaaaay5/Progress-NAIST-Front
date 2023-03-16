@@ -44,6 +44,7 @@ const TOP = () => {
                     fontSize: 24,
                 }}>使ってみる</Button>
         </Stack>
+        <button onClick={()=>{text2Zundamon('今日もいい天気だしんね。何かクロちゃんに聞くことがあるしんか？')}}></button>
     </>
     )
 }

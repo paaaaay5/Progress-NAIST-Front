@@ -32,6 +32,8 @@ export default async function text2speach (text){
       var blobUrl = base64ToBlobUrl(res.audioContent)
       var audio = new Audio()
       audio.src = blobUrl
+      audio.pause();
+      audio.currentTime = 0;
       audio.play()
     } catch(e) {
       console.log(e)
