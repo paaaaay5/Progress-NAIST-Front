@@ -16,6 +16,7 @@ import themeIm from './assets/themes/themeOnly.png';
 import resultWinIm from './assets/result_win.png';
 import resultLoseIm from './assets/result_lose.png';
 import firstTurnIm from './assets/turns/0.png';
+import resultCheckIm from './assets/res.png';
 
 const TALK = () => {
   const location = useLocation();
@@ -86,12 +87,12 @@ const TALK = () => {
     })
     setCnt(cnt => ++cnt);
 
-    //バトル終了判定
     if (cnt > 3){
-      setTextInputFlag(true)
-      setFlag(true);
+      console.log('a')
+      setTextInputFlag(textInputFlag =>!textInputFlag)
+      setFlag(false);
     }
-    
+
     loadImage(cnt);
     inputEL.current.value =''
     const data =  await response.json()
@@ -104,7 +105,8 @@ const TALK = () => {
   const send = () => {
     if (! inputEL.current.value) return
     setChat((chatLogs => [...chatLogs, {"role" : "user", "content": inputEL.current.value}]));
-    setTextInputFlag(textInputFlag => !textInputFlag)
+
+    setTextInputFlag(textInputFlag => !textInputFlag);
     sendPrompt([...chatLogs, {"role" : "user", "content": inputEL.current.value}]);
   };
 
@@ -252,13 +254,13 @@ const TALK = () => {
             disabled = {textInputFlag}
           />
 
-          <IconButton onClick={()=>{send();}} color='primary'>
+          <IconButton onClick={()=>{send();}} color='primary' disabled = {textInputFlag}>
             <Send />
           </IconButton>
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <div className="voice-input">
                 {!recFlag ?(
-                    <IconButton onClick={() =>{recognition.start();setRecFlag(!recFlag)}}  color='primary'>
+                    <IconButton onClick={() =>{recognition.start();setRecFlag(!recFlag)}}  color='primary' disabled = {textInputFlag}>
                         <Mic />
                     </IconButton>
                 ):(
@@ -270,11 +272,16 @@ const TALK = () => {
         </Paper>
       </Stack>
     </Stack>
-    {flag ? (<></>):(<Button onClick={()=>{setResultflag(false)}}>結果を確認</Button>)}
+    {flag ? (<></>)
+        :(
+        <Box sx={{justifyContent: 'center', display: 'flex'}}>
+          <Button onClick={()=>{setResultflag(false)}} >
+            <img src={resultCheckIm} sx={{height:100}}></img>
+          </Button>
+        </Box>
+        )}
     </div>
       ):(
-        resultflag ? (<></>):
-        (
         <div>
           <Box sx={{
             justifyContent: 'center',
@@ -290,18 +297,18 @@ const TALK = () => {
           <Box sx={{
             justifyContent: 'center',
             display: 'flex',}}>
-          <Button onClick={() => {createTodo();navigate('/home');} } 
-                variant="outlined"   
-                sx={{
-                    width: '15%',
-                    color: '#fff',
-                    bgcolor:'#000',
-                    height:100,
-                    fontSize: 24,
-                }}>ホームに戻る</Button>
+            <Button onClick={() => {createTodo();navigate('/home');} } 
+                  variant="outlined"   
+                  sx={{
+                      width: '15%',
+                      color: '#fff',
+                      bgcolor:'#000',
+                      height:100,
+                      fontSize: 24,
+                  }}>ホームに戻る</Button>
           </Box>
         </div>
-      ))}
+      )}
   </>
   )
 };

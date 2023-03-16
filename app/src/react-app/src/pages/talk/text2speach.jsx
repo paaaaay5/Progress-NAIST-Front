@@ -12,7 +12,7 @@ export default async function text2speach (text){
     },
     "audioConfig": {
       "audioEncoding": "MP3",
-      "speaking_rate": "1.4",
+      "speaking_rate": "1.2",
       "pitch" : "14.4",            
     }
   }
