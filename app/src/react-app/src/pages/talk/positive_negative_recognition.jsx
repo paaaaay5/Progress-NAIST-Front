@@ -23,7 +23,7 @@ export default async function positive_negative_recognition(text='何もない',
     }
     const res = await fetch(URL,otherparam);
     const data = await res.json();
-    console.log(data)
+
     if (data.documentSentiment.score <= 0.2){
         return false
     }else{
