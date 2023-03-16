@@ -162,7 +162,7 @@ const TALK = () => {
         <Stack direction="column" 
             spacing={0} 
             sx = {{
-              width: '90%',
+              width:'100%',
         }}>
 
         {/* チャットログ */}
@@ -172,7 +172,7 @@ const TALK = () => {
               boxShadow: 1,
               borderRadius: 2,
               p: 2,
-              height: '100%',
+              height: 500,
               width:'90%',
               overflow: "hidden",
               overflowY: "scroll",
