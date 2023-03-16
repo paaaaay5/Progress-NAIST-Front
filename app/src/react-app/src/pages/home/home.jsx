@@ -17,9 +17,9 @@ import themeIm from './assets/themes/themeOnly.png';
 
 const HOME = () => {
     const navigate = useNavigate();
-    const img_list = ['https://hochi.news/images/2022/12/21/20221221-OHT1I51332-L.jpg',
-                    'https://pbs.twimg.com/profile_images/1476938674612805637/Z9-fGmey_400x400.jpg',
-                    'https://dol.ismcdn.jp/mwimgs/d/5/750/img_88f89f52d1e1833ee8de671a178c006544566.jpg'];
+    const img_list = ['https://1.bp.blogspot.com/--c0K8UbKthw/USSkrgcx9EI/AAAAAAAANWI/wSq7qttn9Lg/s400/hiyoko.png',
+                    'https://2.bp.blogspot.com/-v5ZQsLqjzp4/W3abLWfpDzI/AAAAAAABN_Q/zrk9tPTZ7qEYrk-Vpd0iHhT8Dd6vwHG5QCLcBGAs/s300/dog3_4_tehe.png',
+                    'https://1.bp.blogspot.com/-xihtSBkTelA/YMVaXFmp71I/AAAAAAABd4E/XnKUTf9qc9EsC68ovza2txUtI19N19NNQCNcBGAsYHQ/s450/animal_lion.png'];
 
     const level_img = [easyIM,normalIM,hardIM];
     const themes = ['ハッカソン','たけのこの里','きのこの山','NAIST','iphone','Android'];

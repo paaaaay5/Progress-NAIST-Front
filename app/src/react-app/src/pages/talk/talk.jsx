@@ -98,8 +98,8 @@ const TALK = () => {
     inputEL.current.value =''
     const data =  await response.json()
     setChat((chatLogs =>[...chatLogs,{"role" : "assistant", "content": data.choices[0].message.content}]))
-    // text2speach(data.choices[0].message.content);
-    text2Zundamon(data.choices[0].message.content);
+    text2speach(data.choices[0].message.content);
+    //text2Zundamon(data.choices[0].message.content);
     setEmotion(await positive_negative_recognition(data.choices[0].message.content,theme,level));
     setTextInputFlag(textInputFlag =>!textInputFlag)
   };
