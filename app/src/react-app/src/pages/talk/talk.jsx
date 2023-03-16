@@ -153,7 +153,7 @@ const TALK = () => {
               flexDirection: "column",
             }}
           >
-            <img src= {img_url} style={{height:500}} alt="相手"></img>
+            <img src= {img_url} style={{height:'50%'}} alt="相手"></img>
         </Box>
 
         {/* チャット画面 */}
@@ -170,7 +170,7 @@ const TALK = () => {
               boxShadow: 1,
               borderRadius: 2,
               p: 2,
-              height: 500,
+              height: '100%',
               width:'90%',
               overflow: "hidden",
               overflowY: "scroll",
