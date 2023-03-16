@@ -1,26 +1,21 @@
-import Button from '@mui/material/Button';
 import { React, useState, useRef } from 'react'
-import SendIcon from '@mui/icons-material/Send';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import MicIcon from '@mui/icons-material/Mic';
-import IconButton from '@mui/material/Button';
-import StopIcon from '@mui/icons-material/Stop';
-import {Grid, Typography} from '@mui/material'
-import HEADER from '../header/header';
+import {Grid, Typography, IconButton, Box, Divider, InputBase, Paper, Stack, Button} from '@mui/material'
+import {SendIcon, MicIcon, StopIcon}  from '@mui/icons-material';
 import { useLocation, useNavigate} from "react-router-dom";
+//components
+import HEADER from '../header/header';
+//functions
 import profilePost from './text2speach';
 import positive_negative_recognition from './positive_negative_recognition';
+//graphql
+import { API } from 'aws-amplify';
+import { createTodo as createMutation} from '../../graphql/mutations';
+//image
 import defaultIm from './assets/themes/0.png';
 import themeIm from './assets/themes/themeOnly.png';
 import resultWinIm from './assets/result_win.png';
 import resultLoseIm from './assets/result_lose.png';
 import firstTurnIm from './assets/turns/0.png';
-import { API } from 'aws-amplify';
-import { createTodo as createMutation} from '../../graphql/mutations';
 
 const TALK = () => {
   const location = useLocation();
@@ -28,6 +23,7 @@ const TALK = () => {
   const img_url = location.state.img_url;
   const image = location.state.image || defaultIm;
   const theme = location.state.theme || 'ハッカソン';
+
   const navigate = useNavigate();
 
   const inputEL = useRef(null);
@@ -61,10 +57,10 @@ const TALK = () => {
     const response = await import(`./assets/turns/${ind}.png`)
     setTurnImage(response.default)
   }
+  
+  //実績送信
   const initform = { name: 'naist', theme: theme, level:level};
   const [formData, setFormData] = useState(initform);
-
-  //実績送信
   async function createTodo() {
     if (!emotion){
       return
