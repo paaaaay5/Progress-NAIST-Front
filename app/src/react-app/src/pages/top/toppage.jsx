@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import {Stack, Box } from '@mui/material';
-import text2Zundamon from '../talk/text2Zundamon';
 
 const TOP = () => {
     const navigate = useNavigate();
@@ -44,7 +43,6 @@ const TOP = () => {
                     fontSize: 24,
                 }}>使ってみる</Button>
         </Stack>
-        {/* <button onClick={()=>{text2Zundamon('今日もいい天気だしんね。何かクロちゃんに聞くことがあるしんか？')}}></button> */}
     </>
     )
 }

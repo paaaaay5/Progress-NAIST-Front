@@ -1,4 +1,4 @@
-import {React, useState, useRef } from 'react'
+import {React, useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {Stack, Box, Button,Typography,IconButton, Menu, MenuItem, Grid} from '@mui/material';
 import Modal from "react-modal";
@@ -14,6 +14,7 @@ import hardIM from './assets/hard_black.png';
 import startIM from './assets/start.png';
 import selectThemeIm from './assets/choose.png'
 import themeIm from './assets/themes/themeOnly.png';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const HOME = () => {
     const navigate = useNavigate();
@@ -27,14 +28,19 @@ const HOME = () => {
     const [value,setValue] = useState(null);
     const [open, setOpen] = useState(false);
     const [theme,setTheme] = useState('');
-
+    const [load, setLoad] = useState(false);
+    
     const [ThemeFlag,setThemeFlag] = useState(false);
     const anchorEl = useRef(null);
     const [image, setImage] = useState(null)
 
+    // useEffect(()=>{
+    //     setTimeout(()=>{setLoad(false)},300)
+    //     // setLoad(false)
+    // },[])
+
     //画像のダイナミックインポート
     const loadImage = async(ind) => {
-        console.log(`./assets/themes/${ind}.png`)
         const response = await import(`./assets/themes/${ind}.png`)
         setImage(response.default)
     }
@@ -47,7 +53,7 @@ const HOME = () => {
     const handleClose = () => {
         setOpen(false);
     };
-
+ 
     return (
     <>
         <HEADER/>
